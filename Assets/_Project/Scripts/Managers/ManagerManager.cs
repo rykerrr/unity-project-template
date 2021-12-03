@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace _Project.Scripts.Managers
@@ -15,7 +16,20 @@ namespace _Project.Scripts.Managers
         private readonly Dictionary<Type, IManagerObject> managerDictionary =
             new Dictionary<Type, IManagerObject>();
 
-        public IManagerObject this[Type type] => managerDictionary[type];
+        public IManagerObject this[Type type]
+        {
+            get
+            {
+                if (type.IsInterface)
+                {
+                    var obj = managerDictionary.SingleOrDefault(x => type.IsAssignableFrom(x.Key));
+
+                    return obj.Value;
+                }
+
+                return managerDictionary[type];
+            }
+        }
 
         private void Awake()
         {
